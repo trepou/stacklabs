@@ -3,7 +3,7 @@
     msg: "--- {{ requested_tool }} installation ---"
 
 #Install from role if there is one defined for the requested_tool
-- name: Install {{ requested_tool }} with role
+- name: Install {{ requested_tool }} with role method
   include_role:
     name: "{{ installable_tools[requested_tool].install_role | default(requested_tool) }}"
   when:
@@ -11,7 +11,7 @@
     - installable_tools[requested_tool].install_by_role
 
 #Otherwise, install from package
-- name: Install {{ requested_tool }} with package
+- name: Install {{ requested_tool }} with package method
   package:
     name: "{{ requested_tool }}"
     state: present

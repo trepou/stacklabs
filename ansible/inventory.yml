@@ -1,6 +1,6 @@
 all:
   hosts:
-    docker-host01:
+    XXXXXX:
       requested_tools_as_root:
         - curl
         - dos2unix
@@ -13,7 +13,6 @@ all:
         - git
         - docker
         - awscli
-#        - tree
       requested_tools_as_user:
         - gcloud
         - ohmyzsh

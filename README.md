@@ -7,7 +7,7 @@ dev_user:
 --> public_key_path: "../bill_id_rsa.pub" <--
     default_shell: zsh
 ```
-* Adapt inventory with of Bill's environment hostname. Your ansible server should have root access this host and python should be installed on the host.
+* Adapt inventory with of Bill's environment hostname. Your ansible server should have root access this host (with all sudo privileges) and python should be installed on the host.
 
 
 * Download required roles from ansible galaxy:
