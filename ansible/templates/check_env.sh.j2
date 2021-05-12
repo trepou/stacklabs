@@ -1,0 +1,33 @@
+#/bin/sh
+
+{% for tool in requested_tools_as_root %}
+
+{% if installable_tools[tool].command_to_check_tool_install is defined %}
+{{ installable_tools[tool].command_to_check_tool_install }} > /dev/null 2>&1
+{% else %}
+{{ tool }} --version > /dev/null 2>&1
+{% endif %}
+if [ $? != 0 ]
+then
+  echo "ERROR in {{ tool}} installation !!"
+else
+  echo "{{ tool}} installation OK"
+fi
+
+{% endfor %}
+
+{% for tool in requested_tools_as_user %}
+
+{% if installable_tools[tool].command_to_check_tool_install is defined %}
+{{ installable_tools[tool].command_to_check_tool_install }} > /dev/null 2>&1
+{% else %}
+{{ tool }} --version > /dev/null 2>&1
+{% endif %}
+if [ $? != 0 ]
+then
+  echo "ERROR in {{ tool}} installation !!"
+else
+  echo "{{ tool}} installation OK"
+fi
+
+{% endfor %}

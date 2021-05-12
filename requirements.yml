@@ -1,0 +1,5 @@
+- src: gantsign.golang
+- src: gantsign.maven
+- src: geerlingguy.java
+- src: geerlingguy.git
+- src: geerlingguy.docker

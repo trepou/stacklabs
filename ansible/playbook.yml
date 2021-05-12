@@ -1,0 +1,79 @@
+---
+- name: configure dev environment
+  hosts: all
+  become: yes
+
+  vars_files: vars/installable_tools.yml
+
+  tasks:
+# TOOLS INSTALLATION WITH ROOT
+    - name: Install requested tools as root
+      include_tasks: tasks/install_tool.yml
+      with_items: "{{ requested_tools_as_root }}"
+      loop_control:
+        loop_var: requested_tool
+
+# USER CREATION/CONFIGURATION
+    - name: Get {{ dev_user.default_shell }} path
+      shell: "which {{ dev_user.default_shell }}"
+      register: user_default_shell_path
+      when: dev_user.default_shell is defined
+
+    - name: Create {{ dev_user.username }} user
+      user:
+        name: "{{ dev_user.username }}"
+        groups: "{{ dev_user.groups | default(omit) }}"
+        shell: "{{ user_default_shell_path.stdout_lines[0] | default(omit) }}"
+        state: present
+      register: dev_user_created
+
+    - name: Add provided public key to {{ dev_user.username }} authorized keys
+      authorized_key:
+        user: "{{ dev_user.username }}"
+        key: "{{ lookup('file', dev_user.public_key_path ) }}"
+        comment: "{{ dev_user.username }}"
+        state: present
+
+    - name: Create aliases
+      lineinfile:
+        path: "{{ dev_user_created.home }}/.{{ (dev_user_created.shell).split('/')[-1] }}rc"
+        line: "alias {{ requested_alias }}"
+        state: present
+        create: yes
+      with_items: "{{ dev_user.requested_aliases }}"
+      loop_control:
+        loop_var: requested_alias
+
+# TOOLS INSTALLATION WITH DEV_USER
+    - name: Install requested tools as {{ dev_user.username }} user
+      include_tasks: tasks/install_tool.yml
+      with_items: "{{ requested_tools_as_user }}"
+      args:
+        apply:
+          become_user: "{{ dev_user.username }}"
+      loop_control:
+        loop_var: requested_tool
+
+# POST INSTALLATION TASKS
+    - name: Add export {{ ansible_local.golang.general.home }}/bin to PATH in {{ dev_user_created.home }}/.{{ (dev_user_created.shell).split('/')[-1] }}rc file
+      lineinfile:
+        path: "{{ dev_user_created.home }}/.{{ (dev_user_created.shell).split('/')[-1] }}rc"
+        line: "export PATH=$PATH:{{ ansible_local.golang.general.home }}/bin"
+        state: present
+        create: yes
+      when: "'go' in requested_tools_as_root"
+
+    - name: Run gcloud installer
+      shell: "{{ dev_user_created.home }}/google-cloud-sdk/install.sh -q --rc-path {{ rc_file }} --command-completion true --path-update true"
+      when: "'gcloud' in requested_tools_as_user"
+      vars:
+        rc_file: "{{ dev_user_created.home }}/.{{ (dev_user_created.shell).split('/')[-1] }}rc"
+
+
+# COPY SCRIPT TO TEST INSTALL
+    - name: Copy check_env.sh.j2 template
+      template:
+        src: "check_env.sh.j2"
+        dest: "{{ dev_user_created.home }}/check_env.sh"
+        owner: "{{ dev_user.username }}"
+        mode: "0755"

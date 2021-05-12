@@ -1,0 +1,18 @@
+---
+#this is package for x86_64 architecture
+- name: check that role is run on x86_64 architecture
+  assert:
+    that: ansible_architecture == "x86_64"
+    quiet: yes
+
+- name: Download gcloud zip
+  get_url:
+    url: "{{ archive_download_url }}"
+    dest: "{{ tmp_install_dir }}/gcloud-bundle.tar.gz"
+    mode: 0666
+
+- name: Unarchive gcloud to user home dir
+  unarchive:
+    src: "{{ tmp_install_dir }}/gcloud-bundle.tar.gz"
+    dest: "~"
+    remote_src: yes

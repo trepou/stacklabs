@@ -1,0 +1,2 @@
+installer_download_url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+tmp_install_dir: /tmp

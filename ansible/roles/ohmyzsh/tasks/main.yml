@@ -1,0 +1,19 @@
+---
+
+- name: Check if ~/.oh-my-zsh already exists
+  find:
+    path: ~/.oh-my-zsh
+    recurse: no
+    file_type: directory
+  register: ohmyzsh_directory
+
+- name: Download OhMyZsh installer
+  get_url:
+    url: "{{ installer_download_url }}"
+    dest: "{{ tmp_install_dir }}/ohmyzsh_install.sh"
+    mode: 0777
+  register: new_installer_downloaded
+
+- name: Run OhMyZsh installer
+  shell: "{{ tmp_install_dir }}/ohmyzsh_install.sh --unattended"
+  when: ohmyzsh_directory.matched == 0 or new_installer_downloaded.changed

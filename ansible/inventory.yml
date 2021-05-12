@@ -1,0 +1,29 @@
+all:
+  hosts:
+    docker-host01:
+      requested_tools_as_root:
+        - curl
+        - dos2unix
+        - xclip
+        - sshpass
+        - zsh
+        - go
+        - java
+        - maven
+        - git
+        - docker
+        - awscli
+#        - tree
+      requested_tools_as_user:
+        - gcloud
+        - ohmyzsh
+      dev_user:
+        username: bill
+        groups:
+           - docker
+        public_key_path: "../bill_id_rsa.pub"
+        default_shell: zsh
+        requested_aliases:
+          - "mpack='mvn package'"
+          - "gs='git status'"
+          - "gr='cd ~/my-git-repos'"

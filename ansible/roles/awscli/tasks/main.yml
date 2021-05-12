@@ -1,0 +1,28 @@
+---
+#this is package for x86_64 architecture
+- name: check that role is run on x86_64 architecture
+  assert:
+    that: ansible_architecture == "x86_64"
+    quiet: yes
+
+- name: Insure unzip package is installed
+  package:
+    name: unzip
+    state: present
+
+- name: Download awscli
+  get_url:
+    url: "{{ archive_download_url }}"
+    dest: "{{ tmp_install_dir }}/awscli-bundle.zip"
+    mode: 0666
+
+- name: Unzip awscli
+  unarchive:
+    src: "{{ tmp_install_dir }}/awscli-bundle.zip"
+    dest: /tmp
+    remote_src: yes
+  register: new_package_unzip
+
+- name: Run installer
+  shell: "{{ tmp_install_dir }}/aws/install --update"
+  when: new_package_unzip.changed

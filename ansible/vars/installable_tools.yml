@@ -1,0 +1,39 @@
+---
+installable_tools:
+#  <new_tool>:
+#    install_by_role: <yes or no> --> no is default
+#    install_role: <role_name> --> either ansible-galaxy role or a custom role; if no defined and install_by_role=yes, default value is <new_tool>
+#    command_to_check_tool_install: <command_to check installation> --> if not defined, default is "<new_tool> --version"
+  go:
+    install_by_role: yes
+    install_role: gantsign.golang
+    command_to_check_tool_install: go version
+  java:
+    install_by_role: yes
+    install_role: gantsign.maven
+    # command_to_check_tool_install: java --version      --> not needed as it's the default if not defined
+  maven:
+    install_by_role: yes
+    install_role: geerlingguy.java
+    command_to_check_tool_install: mvn --version
+  git:
+    install_by_role: yes
+    install_role: geerlingguy.git
+  docker:
+    install_by_role: yes
+    install_role: geerlingguy.docker
+  awscli:
+    install_by_role: yes
+    # install_role: awscli    --> not needed as it's the default if not defined
+    command_to_check_tool_install: aws --version
+  gcloud:
+    install_by_role: yes
+  ohmyzsh:
+    install_by_role: yes
+    command_to_check_tool_install: "[ -d ~/.oh-my-zsh ]"
+  xclip:
+    # install_by_role: no    --> not needed as it's the default if not defined
+    command_to_check_tool_install: xclip -version
+  sshpass:
+    command_to_check_tool_install: sshpass -V
+  # curl: --> not needed as all default values are enough (installed by package and check with curl --version)
